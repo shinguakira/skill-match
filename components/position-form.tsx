@@ -1,61 +1,70 @@
-"use client"
+'use client';
 
-import type React from "react"
+import type React from 'react';
 
-import { useState } from "react"
-import { PlusCircle, X } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { Position, Skill } from "@/lib/types"
-import { skillOptions } from "@/lib/data"
+import { useState } from 'react';
+import { PlusCircle, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import type { Position, Skill } from '@/lib/types';
+import { skillOptions } from '@/lib/data';
 
 interface PositionFormProps {
-  onSubmit: (position: Position) => void
+  onSubmit: (position: Position) => void;
 }
 
 export default function PositionForm({ onSubmit }: PositionFormProps) {
-  const [title, setTitle] = useState("")
-  const [department, setDepartment] = useState("")
-  const [requiredSkills, setRequiredSkills] = useState<Skill[]>([])
-  const [currentSkill, setCurrentSkill] = useState<string>("")
-  const [currentLevel, setCurrentLevel] = useState<string>("3")
+  const [title, setTitle] = useState('');
+  const [department, setDepartment] = useState('');
+  const [requiredSkills, setRequiredSkills] = useState<Skill[]>([]);
+  const [currentSkill, setCurrentSkill] = useState<string>('');
+  const [currentLevel, setCurrentLevel] = useState<string>('3');
 
   const handleAddSkill = () => {
-    if (!currentSkill) return
+    if (!currentSkill) return;
 
     // 同じスキルが既に追加されている場合は追加しない
-    if (requiredSkills.some((skill) => skill.name === currentSkill)) return
+    if (requiredSkills.some((skill) => skill.name === currentSkill)) return;
 
-    setRequiredSkills([...requiredSkills, { name: currentSkill, level: Number.parseInt(currentLevel) }])
-    setCurrentSkill("")
-    setCurrentLevel("3")
-  }
+    setRequiredSkills([
+      ...requiredSkills,
+      { name: currentSkill, level: Number.parseInt(currentLevel) },
+    ]);
+    setCurrentSkill('');
+    setCurrentLevel('3');
+  };
 
   const handleRemoveSkill = (skillName: string) => {
-    setRequiredSkills(requiredSkills.filter((skill) => skill.name !== skillName))
-  }
+    setRequiredSkills(requiredSkills.filter((skill) => skill.name !== skillName));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!title || !department || requiredSkills.length === 0) return
+    if (!title || !department || requiredSkills.length === 0) return;
 
     const position: Position = {
-      id: "",
+      id: '',
       title,
       department,
       requiredSkills,
-    }
+    };
 
-    onSubmit(position)
+    onSubmit(position);
 
     // フォームをリセット
-    setTitle("")
-    setDepartment("")
-    setRequiredSkills([])
-  }
+    setTitle('');
+    setDepartment('');
+    setRequiredSkills([]);
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -113,7 +122,13 @@ export default function PositionForm({ onSubmit }: PositionFormProps) {
             </SelectContent>
           </Select>
 
-          <Button type="button" variant="outline" size="icon" onClick={handleAddSkill} disabled={!currentSkill}>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={handleAddSkill}
+            disabled={!currentSkill}
+          >
             <PlusCircle className="h-4 w-4" />
           </Button>
         </div>
@@ -121,7 +136,10 @@ export default function PositionForm({ onSubmit }: PositionFormProps) {
         {requiredSkills.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-2">
             {requiredSkills.map((skill) => (
-              <div key={skill.name} className="bg-muted flex items-center gap-1 px-3 py-1 rounded-full text-sm">
+              <div
+                key={skill.name}
+                className="bg-muted flex items-center gap-1 px-3 py-1 rounded-full text-sm"
+              >
                 {skill.name} ({skill.level})
                 <button
                   type="button"
@@ -136,10 +154,13 @@ export default function PositionForm({ onSubmit }: PositionFormProps) {
         )}
       </div>
 
-      <Button type="submit" className="w-full" disabled={!title || !department || requiredSkills.length === 0}>
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={!title || !department || requiredSkills.length === 0}
+      >
         ポジション情報を登録
       </Button>
     </form>
-  )
+  );
 }
-

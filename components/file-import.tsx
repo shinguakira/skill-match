@@ -1,105 +1,105 @@
-"use client"
+'use client';
 
-import type React from "react"
+import type React from 'react';
 
-import { useState } from "react"
-import { Upload, FileSpreadsheet, FileText, AlertCircle } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import type { Engineer, Position, Skill } from "@/lib/types"
-import { parseCSV, parseExcel, parsePDF } from "@/lib/file-parsers"
+import { useState } from 'react';
+import { Upload, FileSpreadsheet, FileText, AlertCircle } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import type { Engineer, Position, Skill } from '@/lib/types';
+import { parseCSV, parseExcel, parsePDF } from '@/lib/file-parsers';
 
 interface FileImportProps {
-  onImportEngineers: (engineers: Engineer[]) => void
-  onImportPositions: (positions: Position[]) => void
+  onImportEngineers: (engineers: Engineer[]) => void;
+  onImportPositions: (positions: Position[]) => void;
 }
 
 export default function FileImport({ onImportEngineers, onImportPositions }: FileImportProps) {
-  const [importType, setImportType] = useState<"engineers" | "positions">("engineers")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
+  const [importType, setImportType] = useState<'engineers' | 'positions'>('engineers');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>, fileType: string) => {
-    const file = event.target.files?.[0]
-    if (!file) return
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-    setIsLoading(true)
-    setError(null)
-    setSuccess(null)
+    setIsLoading(true);
+    setError(null);
+    setSuccess(null);
 
     try {
-      let parsedData: any[] = []
+      let parsedData: any[] = [];
 
       // ファイルタイプに応じたパーサーを使用
-      if (fileType === "csv") {
-        parsedData = await parseCSV(file)
-      } else if (fileType === "excel") {
-        parsedData = await parseExcel(file)
-      } else if (fileType === "pdf") {
-        parsedData = await parsePDF(file)
+      if (fileType === 'csv') {
+        parsedData = await parseCSV(file);
+      } else if (fileType === 'excel') {
+        parsedData = await parseExcel(file);
+      } else if (fileType === 'pdf') {
+        parsedData = await parsePDF(file);
       }
 
       // データの検証と変換
       if (parsedData.length === 0) {
-        throw new Error("インポートするデータが見つかりませんでした")
+        throw new Error('インポートするデータが見つかりませんでした');
       }
 
       // インポートタイプに応じてデータを処理
-      if (importType === "engineers") {
+      if (importType === 'engineers') {
         const engineers = parsedData.map((item, index) => ({
           id: `import-${Date.now()}-${index}`,
-          name: item.name || "名前なし",
-          yearsOfExperience: Number.parseInt(item.yearsOfExperience || "0"),
+          name: item.name || '名前なし',
+          yearsOfExperience: Number.parseInt(item.yearsOfExperience || '0'),
           skills: parseSkills(item.skills),
-        }))
-        onImportEngineers(engineers)
-        setSuccess(`${engineers.length}人のエンジニア情報をインポートしました`)
+        }));
+        onImportEngineers(engineers);
+        setSuccess(`${engineers.length}人のエンジニア情報をインポートしました`);
       } else {
         const positions = parsedData.map((item, index) => ({
           id: `import-${Date.now()}-${index}`,
-          title: item.title || "タイトルなし",
-          department: item.department || "部署なし",
+          title: item.title || 'タイトルなし',
+          department: item.department || '部署なし',
           requiredSkills: parseSkills(item.requiredSkills),
-        }))
-        onImportPositions(positions)
-        setSuccess(`${positions.length}件のポジション情報をインポートしました`)
+        }));
+        onImportPositions(positions);
+        setSuccess(`${positions.length}件のポジション情報をインポートしました`);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "ファイルのインポート中にエラーが発生しました")
+      setError(err instanceof Error ? err.message : 'ファイルのインポート中にエラーが発生しました');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
       // ファイル選択をリセット
-      event.target.value = ""
+      event.target.value = '';
     }
-  }
+  };
 
   // スキル文字列をパースする関数
   const parseSkills = (skillsStr: string): Skill[] => {
-    if (!skillsStr) return []
+    if (!skillsStr) return [];
 
     try {
       // JSONフォーマットの場合
-      if (skillsStr.trim().startsWith("[")) {
-        return JSON.parse(skillsStr)
+      if (skillsStr.trim().startsWith('[')) {
+        return JSON.parse(skillsStr);
       }
 
       // カンマ区切りの場合（例: "JavaScript:4,TypeScript:3,React:5"）
-      return skillsStr.split(",").map((skill) => {
-        const [name, levelStr] = skill.trim().split(":")
+      return skillsStr.split(',').map((skill) => {
+        const [name, levelStr] = skill.trim().split(':');
         return {
           name: name.trim(),
-          level: Number.parseInt(levelStr?.trim() || "3"),
-        }
-      })
+          level: Number.parseInt(levelStr?.trim() || '3'),
+        };
+      });
     } catch (e) {
       // パースに失敗した場合は空配列を返す
-      console.error("スキルのパースに失敗しました:", e)
-      return []
+      console.error('スキルのパースに失敗しました:', e);
+      return [];
     }
-  }
+  };
 
   return (
     <Card>
@@ -108,7 +108,10 @@ export default function FileImport({ onImportEngineers, onImportPositions }: Fil
         <CardDescription>CSV、Excel、PDFファイルからデータをインポートできます</CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs value={importType} onValueChange={(value) => setImportType(value as "engineers" | "positions")}>
+        <Tabs
+          value={importType}
+          onValueChange={(value) => setImportType(value as 'engineers' | 'positions')}
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="engineers">エンジニア情報</TabsTrigger>
             <TabsTrigger value="positions">ポジション情報</TabsTrigger>
@@ -143,7 +146,7 @@ export default function FileImport({ onImportEngineers, onImportPositions }: Fil
                 id="csv-upload"
                 accept=".csv"
                 className="hidden"
-                onChange={(e) => handleFileUpload(e, "csv")}
+                onChange={(e) => handleFileUpload(e, 'csv')}
               />
               <label htmlFor="csv-upload">
                 <Button variant="outline" className="w-full" asChild>
@@ -161,7 +164,7 @@ export default function FileImport({ onImportEngineers, onImportPositions }: Fil
                 id="excel-upload"
                 accept=".xlsx,.xls"
                 className="hidden"
-                onChange={(e) => handleFileUpload(e, "excel")}
+                onChange={(e) => handleFileUpload(e, 'excel')}
               />
               <label htmlFor="excel-upload">
                 <Button variant="outline" className="w-full" asChild>
@@ -179,7 +182,7 @@ export default function FileImport({ onImportEngineers, onImportPositions }: Fil
                 id="pdf-upload"
                 accept=".pdf"
                 className="hidden"
-                onChange={(e) => handleFileUpload(e, "pdf")}
+                onChange={(e) => handleFileUpload(e, 'pdf')}
               />
               <label htmlFor="pdf-upload">
                 <Button variant="outline" className="w-full" asChild>
@@ -224,6 +227,5 @@ export default function FileImport({ onImportEngineers, onImportPositions }: Fil
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
-

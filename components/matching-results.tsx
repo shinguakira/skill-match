@@ -1,22 +1,37 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import type { Engineer, Position, MatchResult } from "@/lib/types"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import type { Engineer, Position, MatchResult } from '@/lib/types';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface MatchingResultsProps {
-  results: MatchResult[]
-  engineers: Engineer[]
-  positions: Position[]
+  results: MatchResult[];
+  engineers: Engineer[];
+  positions: Position[];
 }
 
 export default function MatchingResults({ results, engineers, positions }: MatchingResultsProps) {
-  const [selectedPosition, setSelectedPosition] = useState<string>("all")
+  const [selectedPosition, setSelectedPosition] = useState<string>('all');
 
   const filteredResults =
-    selectedPosition === "all" ? results : results.filter((result) => result.positionId === selectedPosition)
+    selectedPosition === 'all'
+      ? results
+      : results.filter((result) => result.positionId === selectedPosition);
 
   if (engineers.length === 0 || positions.length === 0) {
     return (
@@ -27,7 +42,7 @@ export default function MatchingResults({ results, engineers, positions }: Match
           </p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (results.length === 0) {
@@ -39,7 +54,7 @@ export default function MatchingResults({ results, engineers, positions }: Match
           </p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -79,10 +94,10 @@ export default function MatchingResults({ results, engineers, positions }: Match
               filteredResults
                 .sort((a, b) => b.score - a.score)
                 .map((result) => {
-                  const engineer = engineers.find((e) => e.id === result.engineerId)
-                  const position = positions.find((p) => p.id === result.positionId)
+                  const engineer = engineers.find((e) => e.id === result.engineerId);
+                  const position = positions.find((p) => p.id === result.positionId);
 
-                  if (!engineer || !position) return null
+                  if (!engineer || !position) return null;
 
                   return (
                     <TableRow key={`${result.engineerId}-${result.positionId}`}>
@@ -91,7 +106,10 @@ export default function MatchingResults({ results, engineers, positions }: Match
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <div className="w-full bg-muted rounded-full h-2.5">
-                            <div className="bg-primary h-2.5 rounded-full" style={{ width: `${result.score}%` }}></div>
+                            <div
+                              className="bg-primary h-2.5 rounded-full"
+                              style={{ width: `${result.score}%` }}
+                            ></div>
                           </div>
                           <span className="text-sm font-medium">{result.score}%</span>
                         </div>
@@ -111,7 +129,8 @@ export default function MatchingResults({ results, engineers, positions }: Match
                               <span>不足スキル: </span>
                               {result.missingSkills.map((skill, index) => (
                                 <span key={skill.name}>
-                                  {skill.name} (Lv.{skill.level}){index < result.missingSkills.length - 1 ? ", " : ""}
+                                  {skill.name} (Lv.{skill.level})
+                                  {index < result.missingSkills.length - 1 ? ', ' : ''}
                                 </span>
                               ))}
                             </div>
@@ -119,7 +138,7 @@ export default function MatchingResults({ results, engineers, positions }: Match
                         </div>
                       </TableCell>
                     </TableRow>
-                  )
+                  );
                 })
             ) : (
               <TableRow>
@@ -132,6 +151,5 @@ export default function MatchingResults({ results, engineers, positions }: Match
         </Table>
       </CardContent>
     </Card>
-  )
+  );
 }
-

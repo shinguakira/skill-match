@@ -1,20 +1,27 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Search, X, ChevronDown, Check } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { skillOptions } from "@/lib/data"
+import { useState } from 'react';
+import { Search, X, ChevronDown, Check } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { skillOptions } from '@/lib/data';
 
 interface AdvancedSearchProps {
-  keywordPlaceholder: string
-  keywordValue: string
-  onKeywordChange: (value: string) => void
-  selectedSkills: string[]
-  onSkillsChange: (skills: string[]) => void
+  keywordPlaceholder: string;
+  keywordValue: string;
+  onKeywordChange: (value: string) => void;
+  selectedSkills: string[];
+  onSkillsChange: (skills: string[]) => void;
 }
 
 export default function AdvancedSearch({
@@ -24,31 +31,33 @@ export default function AdvancedSearch({
   selectedSkills,
   onSkillsChange,
 }: AdvancedSearchProps) {
-  const [open, setOpen] = useState(false)
-  const [searchValue, setSearchValue] = useState("")
+  const [open, setOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
 
   // スキルの選択/解除
   const toggleSkill = (skill: string) => {
     if (selectedSkills.includes(skill)) {
-      onSkillsChange(selectedSkills.filter((s) => s !== skill))
+      onSkillsChange(selectedSkills.filter((s) => s !== skill));
     } else {
-      onSkillsChange([...selectedSkills, skill])
+      onSkillsChange([...selectedSkills, skill]);
     }
-  }
+  };
 
   // 選択されたスキルをすべて解除
   const clearSelectedSkills = () => {
-    onSkillsChange([])
-  }
+    onSkillsChange([]);
+  };
 
   // 検索条件をすべてクリア
   const clearAllFilters = () => {
-    onKeywordChange("")
-    onSkillsChange([])
-  }
+    onKeywordChange('');
+    onSkillsChange([]);
+  };
 
   // 検索結果をフィルタリング
-  const filteredSkills = skillOptions.filter((skill) => skill.toLowerCase().includes(searchValue.toLowerCase()))
+  const filteredSkills = skillOptions.filter((skill) =>
+    skill.toLowerCase().includes(searchValue.toLowerCase())
+  );
 
   return (
     <div className="space-y-2">
@@ -65,7 +74,7 @@ export default function AdvancedSearch({
           {keywordValue && (
             <button
               className="absolute right-2 top-2.5 text-muted-foreground hover:text-foreground"
-              onClick={() => onKeywordChange("")}
+              onClick={() => onKeywordChange('')}
               aria-label="検索をクリア"
             >
               <X className="h-4 w-4" />
@@ -83,7 +92,11 @@ export default function AdvancedSearch({
           </PopoverTrigger>
           <PopoverContent className="w-[300px] p-0" align="start">
             <Command>
-              <CommandInput placeholder="スキルを検索..." value={searchValue} onValueChange={setSearchValue} />
+              <CommandInput
+                placeholder="スキルを検索..."
+                value={searchValue}
+                onValueChange={setSearchValue}
+              />
               <CommandList>
                 <CommandEmpty>スキルが見つかりません</CommandEmpty>
                 <CommandGroup>
@@ -92,10 +105,14 @@ export default function AdvancedSearch({
                       <div className="flex items-center gap-2 flex-1">
                         <div
                           className={`flex h-4 w-4 items-center justify-center rounded-sm border ${
-                            selectedSkills.includes(skill) ? "bg-primary border-primary" : "opacity-50"
+                            selectedSkills.includes(skill)
+                              ? 'bg-primary border-primary'
+                              : 'opacity-50'
                           }`}
                         >
-                          {selectedSkills.includes(skill) && <Check className="h-3 w-3 text-primary-foreground" />}
+                          {selectedSkills.includes(skill) && (
+                            <Check className="h-3 w-3 text-primary-foreground" />
+                          )}
                         </div>
                         <span>{skill}</span>
                       </div>
@@ -109,8 +126,8 @@ export default function AdvancedSearch({
                   size="sm"
                   className="w-full"
                   onClick={() => {
-                    clearSelectedSkills()
-                    setOpen(false)
+                    clearSelectedSkills();
+                    setOpen(false);
                   }}
                 >
                   選択をクリア
@@ -127,12 +144,20 @@ export default function AdvancedSearch({
           {selectedSkills.map((skill) => (
             <Badge key={skill} variant="secondary" className="flex items-center gap-1">
               {skill}
-              <button onClick={() => toggleSkill(skill)} className="text-muted-foreground hover:text-foreground ml-1">
+              <button
+                onClick={() => toggleSkill(skill)}
+                className="text-muted-foreground hover:text-foreground ml-1"
+              >
                 <X className="h-3 w-3" />
               </button>
             </Badge>
           ))}
-          <Button variant="ghost" size="sm" className="h-6 px-2 text-xs" onClick={clearSelectedSkills}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 px-2 text-xs"
+            onClick={clearSelectedSkills}
+          >
             クリア
           </Button>
         </div>
@@ -147,6 +172,5 @@ export default function AdvancedSearch({
         </div>
       )}
     </div>
-  )
+  );
 }
-

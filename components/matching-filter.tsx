@@ -1,78 +1,80 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Search, Filter } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import type { Engineer, Position } from "@/lib/types"
+import { useState } from 'react';
+import { Search, Filter } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { Engineer, Position } from '@/lib/types';
 
 interface MatchingFilterProps {
-  engineers: Engineer[]
-  positions: Position[]
-  onFilter: (selectedEngineers: string[], selectedPositions: string[]) => void
+  engineers: Engineer[];
+  positions: Position[];
+  onFilter: (selectedEngineers: string[], selectedPositions: string[]) => void;
 }
 
 export default function MatchingFilter({ engineers, positions, onFilter }: MatchingFilterProps) {
-  const [engineerSearchTerm, setEngineerSearchTerm] = useState("")
-  const [positionSearchTerm, setPositionSearchTerm] = useState("")
-  const [selectedEngineers, setSelectedEngineers] = useState<string[]>([])
-  const [selectedPositions, setSelectedPositions] = useState<string[]>([])
-  const [showFilters, setShowFilters] = useState(false)
+  const [engineerSearchTerm, setEngineerSearchTerm] = useState('');
+  const [positionSearchTerm, setPositionSearchTerm] = useState('');
+  const [selectedEngineers, setSelectedEngineers] = useState<string[]>([]);
+  const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
 
   // エンジニア検索結果
   const filteredEngineers = engineers.filter((engineer) =>
-    engineer.name.toLowerCase().includes(engineerSearchTerm.toLowerCase()),
-  )
+    engineer.name.toLowerCase().includes(engineerSearchTerm.toLowerCase())
+  );
 
   // ポジション検索結果
   const filteredPositions = positions.filter((position) =>
-    position.title.toLowerCase().includes(positionSearchTerm.toLowerCase()),
-  )
+    position.title.toLowerCase().includes(positionSearchTerm.toLowerCase())
+  );
 
   // エンジニア選択の切り替え
   const toggleEngineer = (engineerId: string) => {
     setSelectedEngineers((prev) =>
-      prev.includes(engineerId) ? prev.filter((id) => id !== engineerId) : [...prev, engineerId],
-    )
-  }
+      prev.includes(engineerId) ? prev.filter((id) => id !== engineerId) : [...prev, engineerId]
+    );
+  };
 
   // ポジション選択の切り替え
   const togglePosition = (positionId: string) => {
     setSelectedPositions((prev) =>
-      prev.includes(positionId) ? prev.filter((id) => id !== positionId) : [...prev, positionId],
-    )
-  }
+      prev.includes(positionId) ? prev.filter((id) => id !== positionId) : [...prev, positionId]
+    );
+  };
 
   // すべてのエンジニアを選択/解除
   const toggleAllEngineers = () => {
     if (selectedEngineers.length === filteredEngineers.length) {
-      setSelectedEngineers([])
+      setSelectedEngineers([]);
     } else {
-      setSelectedEngineers(filteredEngineers.map((e) => e.id))
+      setSelectedEngineers(filteredEngineers.map((e) => e.id));
     }
-  }
+  };
 
   // すべてのポジションを選択/解除
   const toggleAllPositions = () => {
     if (selectedPositions.length === filteredPositions.length) {
-      setSelectedPositions([])
+      setSelectedPositions([]);
     } else {
-      setSelectedPositions(filteredPositions.map((p) => p.id))
+      setSelectedPositions(filteredPositions.map((p) => p.id));
     }
-  }
+  };
 
   // フィルタを適用してマッチング実行
   const applyFilter = () => {
     // 選択されていない場合は全て選択したとみなす
-    const engineerIds = selectedEngineers.length > 0 ? selectedEngineers : engineers.map((e) => e.id)
+    const engineerIds =
+      selectedEngineers.length > 0 ? selectedEngineers : engineers.map((e) => e.id);
 
-    const positionIds = selectedPositions.length > 0 ? selectedPositions : positions.map((p) => p.id)
+    const positionIds =
+      selectedPositions.length > 0 ? selectedPositions : positions.map((p) => p.id);
 
-    onFilter(engineerIds, positionIds)
-  }
+    onFilter(engineerIds, positionIds);
+  };
 
   return (
     <Card>
@@ -81,7 +83,7 @@ export default function MatchingFilter({ engineers, positions, onFilter }: Match
           <CardTitle>マッチング対象の選択</CardTitle>
           <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)}>
             <Filter className="h-4 w-4 mr-1" />
-            {showFilters ? "フィルターを隠す" : "フィルターを表示"}
+            {showFilters ? 'フィルターを隠す' : 'フィルターを表示'}
           </Button>
         </div>
       </CardHeader>
@@ -109,7 +111,10 @@ export default function MatchingFilter({ engineers, positions, onFilter }: Match
                 <div className="flex items-center space-x-2 pb-2 mb-2 border-b">
                   <Checkbox
                     id="select-all-engineers"
-                    checked={selectedEngineers.length === filteredEngineers.length && filteredEngineers.length > 0}
+                    checked={
+                      selectedEngineers.length === filteredEngineers.length &&
+                      filteredEngineers.length > 0
+                    }
                     onCheckedChange={toggleAllEngineers}
                   />
                   <label
@@ -139,14 +144,16 @@ export default function MatchingFilter({ engineers, positions, onFilter }: Match
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground text-center py-2">検索結果がありません</p>
+                  <p className="text-sm text-muted-foreground text-center py-2">
+                    検索結果がありません
+                  </p>
                 )}
               </div>
 
               <div className="text-xs text-muted-foreground">
                 {selectedEngineers.length > 0
                   ? `${selectedEngineers.length}人のエンジニアを選択中`
-                  : "選択なし（すべてのエンジニアが対象）"}
+                  : '選択なし（すべてのエンジニアが対象）'}
               </div>
             </div>
 
@@ -170,7 +177,10 @@ export default function MatchingFilter({ engineers, positions, onFilter }: Match
                 <div className="flex items-center space-x-2 pb-2 mb-2 border-b">
                   <Checkbox
                     id="select-all-positions"
-                    checked={selectedPositions.length === filteredPositions.length && filteredPositions.length > 0}
+                    checked={
+                      selectedPositions.length === filteredPositions.length &&
+                      filteredPositions.length > 0
+                    }
                     onCheckedChange={toggleAllPositions}
                   />
                   <label
@@ -200,14 +210,16 @@ export default function MatchingFilter({ engineers, positions, onFilter }: Match
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground text-center py-2">検索結果がありません</p>
+                  <p className="text-sm text-muted-foreground text-center py-2">
+                    検索結果がありません
+                  </p>
                 )}
               </div>
 
               <div className="text-xs text-muted-foreground">
                 {selectedPositions.length > 0
                   ? `${selectedPositions.length}件のポジションを選択中`
-                  : "選択なし（すべてのポジションが対象）"}
+                  : '選択なし（すべてのポジションが対象）'}
               </div>
             </div>
           </div>
@@ -218,6 +230,5 @@ export default function MatchingFilter({ engineers, positions, onFilter }: Match
         </CardContent>
       )}
     </Card>
-  )
+  );
 }
-
